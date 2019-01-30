@@ -264,14 +264,14 @@ let dbInstance: Database = new Database(dbOptions);
 dbInstance.connect().then(async () => {
     // now you can use db instance as your data access
 
-    let player = dbInstance.player.create({
+    let player = await dbInstance.player.create({
         name: 'Michael Jordan',
         number: 23
     });
 
     // or
 
-    let team = dbInstance.team.create({
+    let team = await dbInstance.team.create({
         name: 'Chicago Bulls',
         players: [
             {
