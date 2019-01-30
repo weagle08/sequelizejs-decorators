@@ -1,0 +1,40 @@
+{
+    "extends": "tslint:recommended",
+    "rules": {
+        "quotemark": [
+            true,
+            "single"
+        ],
+        "trailing-comma": true,
+        "object-literal-sort-keys": false,
+        "semicolon": true,
+        "eofline": false,
+        "no-var-requires": false,
+        "interface-name": false,
+        "variable-name": [
+            true,
+            "ban-keywords",
+            "check-format",
+            "allow-leading-underscore",
+            "allow-pascal-case"
+        ],
+        "no-empty": false,
+        "no-empty-interface": false,
+        "max-line-length": [
+            true,
+            {
+                "limit": 200,
+                "ignore-pattern": "^\\s*\\*"
+            }
+        ],
+        "member-ordering": false,
+        "object-literal-shorthand": false,
+        "prefer-const": false,
+        "forin": false
+    },
+    "linterOptions": {
+        "exclude": [
+            "node_modules"
+        ]
+    }
+}
