@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "decorators for the sequelize ORM for NodeJS",
   "main": "dist/index.js",
+  "types": "src/index.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
