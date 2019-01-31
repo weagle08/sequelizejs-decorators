@@ -179,15 +179,32 @@ const AssociationMethods = {
     BELONGS_TO_MANY: 'belongsToMany'
 };
 function getMeta(target) {
+    if (target.constructor == null) {
+        throw new Error('Invalid Entity. Entities should be of type function/class.');
+    }
     if (target.__sequelize_meta__ == null) {
         target.__sequelize_meta__ = {
-            name: null,
-            fields: {},
-            associations: {},
-            options: {}
+            entities: []
         };
     }
-    return target.__sequelize_meta__;
+    let found = null;
+    for (let entity of target.__sequelize_meta__.entities) {
+        let e = entity;
+        if (e.name === target.constructor.name) {
+            found = e;
+            break;
+        }
+    }
+    if (found == null) {
+        found = {
+            name: target.constructor.name,
+            associations: {},
+            fields: {},
+            options: {}
+        };
+        target.__sequelize_meta__.entities.push(found);
+    }
+    return found;
 }
 function clean(obj) {
     for (let key of Object.keys(obj)) {

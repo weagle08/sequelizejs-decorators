@@ -30,7 +30,8 @@
         "member-ordering": false,
         "object-literal-shorthand": false,
         "prefer-const": false,
-        "forin": false
+        "forin": false,
+        "ban-types": false
     },
     "linterOptions": {
         "exclude": [

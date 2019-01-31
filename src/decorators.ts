@@ -10,7 +10,7 @@ import {
     AssociationOptionsHasMany,
     AssociationOptionsBelongsToMany
 } from 'sequelize';
-import * as sequelize from 'sequelize';
+import { Sequelize } from 'sequelize';
 
 const dtype: SequelizeDataTypes = require('sequelize').DataTypes;
 export const DataType = dtype;
@@ -193,7 +193,7 @@ export function Index(options?: IIndexOptions) {
     }
 }
 
-export function registerEntities(sequelize: sequelize.Sequelize, entities: Function[]): Models {
+export function registerEntities(sequelize: Sequelize, entities: Function[]): Models {
     // define the attributes
     for (let entity of entities) {
         let e = Object.create(entity.prototype);
@@ -231,7 +231,7 @@ interface IEntity {
     associations: {
         [key: string]: IEntityAssociation;
     },
-    options: DefineOptions<any>
+    options: DefineOptions<any>;
 }
 
 interface IEntityAssociation {
@@ -247,17 +247,38 @@ const AssociationMethods = {
     BELONGS_TO_MANY: 'belongsToMany'
 }
 
-function getMeta(target: any): IEntity {
-    if (target.__sequelize_meta__ == null) {
-        target.__sequelize_meta__ = {
-            name: null,
-            fields: {},
-            associations: {},
-            options: {}
-        } as IEntity;
+function getMeta(target: Object): IEntity {
+    if (target.constructor == null) {
+        throw new Error('Invalid Entity. Entities should be of type function/class.');
     }
 
-    return target.__sequelize_meta__;
+    if ((target as any).__sequelize_meta__ == null) {
+        (target as any).__sequelize_meta__ = {
+            entities: []
+        }
+    }
+
+    let found: IEntity = null;
+    for (let entity of (target as any).__sequelize_meta__.entities) {
+        let e: IEntity = entity;
+        if (e.name === target.constructor.name) {
+            found = e;
+            break;
+        }
+    }
+
+    if (found == null) {
+        found = {
+            name: target.constructor.name,
+            associations: {},
+            fields: {},
+            options: {}
+        };
+
+        (target as any).__sequelize_meta__.entities.push(found);
+    }
+
+    return found;
 }
 
 function clean(obj: any) {
