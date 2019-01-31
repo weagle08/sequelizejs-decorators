@@ -1,14 +1,15 @@
 import {
     DataTypes as SequelizeDataTypes,
     DefineAttributeColumnOptions,
-    Models,
     DefineOptions,
+    Models,
     AssociationOptions,
     DefineIndexesOptions,
     AssociationOptionsHasOne,
     AssociationOptionsBelongsTo,
     AssociationOptionsHasMany,
-    AssociationOptionsBelongsToMany
+    AssociationOptionsBelongsToMany,
+    DefineNameOptions
 } from 'sequelize';
 import { Sequelize } from 'sequelize';
 
@@ -24,17 +25,17 @@ export interface IIndexOptions {
     unique?: boolean;
 }
 
-export function Entity(name?: string, options?: DefineOptions<any>) {
+export function Entity(name?: string | DefineNameOptions, options?: DefineOptions<any>) {
     return (target: Function) => {
         let meta = getMeta(target.prototype);
 
-        if (typeof name == 'string') {
+        if (typeof name === 'string') {
             meta.name = name;
         } else {
             meta.name = target.name;
 
-            if (options == null && name != null && typeof name == 'object') {
-                options = Object.assign({}, name, meta.options);
+            if (options == null && name != null && typeof name === 'object') {
+                options = Object.assign({}, { name: name }, meta.options);
             }
         }
 
@@ -254,18 +255,11 @@ function getMeta(target: Object): IEntity {
 
     if ((target as any).__sequelize_meta__ == null) {
         (target as any).__sequelize_meta__ = {
-            entities: []
+            entities: {}
         }
     }
 
-    let found: IEntity = null;
-    for (let entity of (target as any).__sequelize_meta__.entities) {
-        let e: IEntity = entity;
-        if (e.name === target.constructor.name) {
-            found = e;
-            break;
-        }
-    }
+    let found: IEntity = (target as any).__sequelize_meta__.entities[target.constructor.name];
 
     if (found == null) {
         found = {
@@ -275,7 +269,7 @@ function getMeta(target: Object): IEntity {
             options: {}
         };
 
-        (target as any).__sequelize_meta__.entities.push(found);
+        (target as any).__sequelize_meta__.entities[target.constructor.name] = found;
     }
 
     return found;

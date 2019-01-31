@@ -31,7 +31,8 @@
         "object-literal-shorthand": false,
         "prefer-const": false,
         "forin": false,
-        "ban-types": false
+        "ban-types": false,
+        "ordered-imports": true
     },
     "linterOptions": {
         "exclude": [
