@@ -49,28 +49,28 @@ export function Entity(name?: string | DefineNameOptions, options?: DefineOption
         if (meta.options.updatedAt == null) {
             meta.options.updatedAt = false;
         }
-    }
+    };
 }
 
 export function Column(attribute: DefineAttributeColumnOptions) {
     return (target: any, key: string) => {
         let meta = getMeta(target);
         meta.fields[key] = attribute;
-    }
+    };
 }
 
 export function CreatedDateColumn() {
     return (target: any, key: string) => {
         let meta = getMeta(target);
         meta.options.createdAt = key;
-    }
+    };
 }
 
 export function UpdatedDateColumn() {
     return (target: any, key: string) => {
         let meta = getMeta(target);
         meta.options.updatedAt = key;
-    }
+    };
 }
 
 export function PrimaryGeneratedColumn() {
@@ -81,7 +81,7 @@ export function PrimaryGeneratedColumn() {
             type: DataType.INTEGER,
             autoIncrement: true
         };
-    }
+    };
 }
 
 export function HasOne(typeFunction: () => Function, options?: AssociationOptionsHasOne) {
@@ -98,8 +98,8 @@ export function HasOne(typeFunction: () => Function, options?: AssociationOption
             method: AssociationMethods.HAS_ONE,
             target: typeFunction,
             association: options
-        }
-    }
+        };
+    };
 }
 
 export function HasMany(typeFunction: () => Function, options?: AssociationOptionsHasMany) {
@@ -116,8 +116,8 @@ export function HasMany(typeFunction: () => Function, options?: AssociationOptio
             method: AssociationMethods.HAS_MANY,
             target: typeFunction,
             association: options
-        }
-    }
+        };
+    };
 }
 
 export function BelongsTo(typeFunction: () => Function, options?: AssociationOptionsBelongsTo) {
@@ -134,8 +134,8 @@ export function BelongsTo(typeFunction: () => Function, options?: AssociationOpt
             method: AssociationMethods.BELONGS_TO,
             target: typeFunction,
             association: options
-        }
-    }
+        };
+    };
 }
 
 export function ManyToMany(typeFunction: () => Function, options: AssociationOptionsBelongsToMany) {
@@ -156,8 +156,8 @@ export function ManyToMany(typeFunction: () => Function, options: AssociationOpt
             method: AssociationMethods.BELONGS_TO_MANY,
             target: typeFunction,
             association: options
-        }
-    }
+        };
+    };
 }
 
 export function Index(options?: IIndexOptions) {
@@ -191,7 +191,7 @@ export function Index(options?: IIndexOptions) {
         clean(index);
 
         meta.options.indexes.push(index);
-    }
+    };
 }
 
 export function registerEntities(sequelize: Sequelize, entities: Function[]): Models {

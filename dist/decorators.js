@@ -5,13 +5,13 @@ exports.DataType = dtype;
 function Entity(name, options) {
     return (target) => {
         let meta = getMeta(target.prototype);
-        if (typeof name == 'string') {
+        if (typeof name === 'string') {
             meta.name = name;
         }
         else {
             meta.name = target.name;
-            if (options == null && name != null && typeof name == 'object') {
-                options = Object.assign({}, name, meta.options);
+            if (options == null && name != null && typeof name === 'object') {
+                options = Object.assign({}, { name: name }, meta.options);
             }
         }
         meta.options = Object.assign({}, options, meta.options);
@@ -184,17 +184,10 @@ function getMeta(target) {
     }
     if (target.__sequelize_meta__ == null) {
         target.__sequelize_meta__ = {
-            entities: []
+            entities: {}
         };
     }
-    let found = null;
-    for (let entity of target.__sequelize_meta__.entities) {
-        let e = entity;
-        if (e.name === target.constructor.name) {
-            found = e;
-            break;
-        }
-    }
+    let found = target.__sequelize_meta__.entities[target.constructor.name];
     if (found == null) {
         found = {
             name: target.constructor.name,
@@ -202,7 +195,7 @@ function getMeta(target) {
             fields: {},
             options: {}
         };
-        target.__sequelize_meta__.entities.push(found);
+        target.__sequelize_meta__.entities[target.constructor.name] = found;
     }
     return found;
 }
