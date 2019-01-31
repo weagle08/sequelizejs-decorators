@@ -1,15 +1,17 @@
+// tslint:disable:ban-types
+
 import {
+    AssociationOptions,
+    AssociationOptionsBelongsTo,
+    AssociationOptionsBelongsToMany,
+    AssociationOptionsHasMany,
+    AssociationOptionsHasOne,
     DataTypes as SequelizeDataTypes,
     DefineAttributeColumnOptions,
-    DefineOptions,
-    Models,
-    AssociationOptions,
     DefineIndexesOptions,
-    AssociationOptionsHasOne,
-    AssociationOptionsBelongsTo,
-    AssociationOptionsHasMany,
-    AssociationOptionsBelongsToMany,
-    DefineNameOptions
+    DefineNameOptions,
+    DefineOptions,
+    Models
 } from 'sequelize';
 import { Sequelize } from 'sequelize';
 
@@ -147,7 +149,7 @@ export function ManyToMany(typeFunction: () => Function, options: AssociationOpt
         }
 
         if (options.through == null) {
-            throw new Error('through property is required for belongs to many association')
+            throw new Error('through property is required for belongs to many association');
         }
 
         options.as = key;
@@ -197,6 +199,8 @@ export function Index(options?: IIndexOptions) {
 export function registerEntities(sequelize: Sequelize, entities: Function[]): Models {
     // define the attributes
     for (let entity of entities) {
+        // initially we need to merge base entities with their children
+        mergeEntity(entity);
         let e = Object.create(entity.prototype);
         let meta = getMeta(e);
 
@@ -224,21 +228,64 @@ export function registerEntities(sequelize: Sequelize, entities: Function[]): Mo
     return sequelize.models;
 }
 
+function mergeEntity(entity: Function) {
+    let keys: string[] = getEntityKeys(entity);
+    // remove first key since it is this entity
+    keys.splice(0, 1);
+    let e = Object.create(entity.prototype);
+    let mainEntity = getMeta(e);
+
+    // now lets add inherited entity items
+    for (let key of keys) {
+        let meta = getEntityMeta(e, key);
+        if (meta != null) {
+            // merge fields
+            for (let fKey of Object.keys(meta.fields)) {
+                mainEntity.fields[fKey] = meta.fields[fKey];
+            }
+
+            // merge options
+            mainEntity.options = Object.assign({}, meta.options, mainEntity.options);
+
+            for (let aKey of Object.keys(meta.associations)) {
+                mainEntity.associations[aKey] = meta.associations[aKey];
+            }
+        }
+    }
+}
+
+function getEntityMeta(eObject: Object, key: string): IEntity {
+    return (eObject as any).__sequelize_meta__.entities[key] as IEntity;
+}
+
+function getEntityKeys(entity: Function) {
+    let keys: string[] = [];
+    if (entity.prototype != null) {
+        keys.push(entity.prototype.constructor.name);
+    }
+
+    if ((entity as any).__proto__ != null && (entity as any).__proto__.constructor.name !== 'Object') {
+        keys = keys.concat(getEntityKeys((entity as any).__proto__));
+    }
+
+    return keys;
+}
+
 interface IEntity {
     name: string;
     fields: {
         [key: string]: DefineAttributeColumnOptions
-    }
+    };
     associations: {
         [key: string]: IEntityAssociation;
-    },
+    };
     options: DefineOptions<any>;
 }
 
 interface IEntityAssociation {
     target: Function;
     method: string;
-    association: AssociationOptions
+    association: AssociationOptions;
 }
 
 const AssociationMethods = {
@@ -246,7 +293,7 @@ const AssociationMethods = {
     BELONGS_TO: 'belongsTo',
     HAS_MANY: 'hasMany',
     BELONGS_TO_MANY: 'belongsToMany'
-}
+};
 
 function getMeta(target: Object): IEntity {
     if (target.constructor == null) {
@@ -256,7 +303,7 @@ function getMeta(target: Object): IEntity {
     if ((target as any).__sequelize_meta__ == null) {
         (target as any).__sequelize_meta__ = {
             entities: {}
-        }
+        };
     }
 
     let found: IEntity = (target as any).__sequelize_meta__.entities[target.constructor.name];
@@ -277,6 +324,6 @@ function getMeta(target: Object): IEntity {
 
 function clean(obj: any) {
     for (let key of Object.keys(obj)) {
-        if (obj[key] == null) delete obj[key];
+        if (obj[key] == null) { delete obj[key]; }
     }
 }

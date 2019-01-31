@@ -151,6 +151,7 @@ function Index(options) {
 exports.Index = Index;
 function registerEntities(sequelize, entities) {
     for (let entity of entities) {
+        mergeEntity(entity);
         let e = Object.create(entity.prototype);
         let meta = getMeta(e);
         sequelize.define(meta.name, meta.fields, meta.options);
@@ -172,6 +173,37 @@ function registerEntities(sequelize, entities) {
     return sequelize.models;
 }
 exports.registerEntities = registerEntities;
+function mergeEntity(entity) {
+    let keys = getEntityKeys(entity);
+    keys.splice(0, 1);
+    let e = Object.create(entity.prototype);
+    let mainEntity = getMeta(e);
+    for (let key of keys) {
+        let meta = getEntityMeta(e, key);
+        if (meta != null) {
+            for (let fKey of Object.keys(meta.fields)) {
+                mainEntity.fields[fKey] = meta.fields[fKey];
+            }
+            mainEntity.options = Object.assign({}, meta.options, mainEntity.options);
+            for (let aKey of Object.keys(meta.associations)) {
+                mainEntity.associations[aKey] = meta.associations[aKey];
+            }
+        }
+    }
+}
+function getEntityMeta(eObject, key) {
+    return eObject.__sequelize_meta__.entities[key];
+}
+function getEntityKeys(entity) {
+    let keys = [];
+    if (entity.prototype != null) {
+        keys.push(entity.prototype.constructor.name);
+    }
+    if (entity.__proto__ != null && entity.__proto__.constructor.name !== 'Object') {
+        keys = keys.concat(getEntityKeys(entity.__proto__));
+    }
+    return keys;
+}
 const AssociationMethods = {
     HAS_ONE: 'hasOne',
     BELONGS_TO: 'belongsTo',
@@ -201,8 +233,9 @@ function getMeta(target) {
 }
 function clean(obj) {
     for (let key of Object.keys(obj)) {
-        if (obj[key] == null)
+        if (obj[key] == null) {
             delete obj[key];
+        }
     }
 }
 
