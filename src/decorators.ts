@@ -29,7 +29,7 @@ export interface IIndexOptions {
     unique?: boolean;
 }
 
-export function Entity(name?: string | DefineNameOptions, options?: DefineOptions<any>) {
+export function Entity(name?: string | DefineOptions<any>, options?: DefineOptions<any>) {
     return (target: Function) => {
         let meta = getMeta(target.prototype);
 
