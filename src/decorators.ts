@@ -66,14 +66,14 @@ export function Column(attribute: DefineAttributeColumnOptions) {
 export function CreatedDateColumn() {
     return (target: any, key: string) => {
         let meta = getMeta(target);
-        meta.options.createdAt = key;
+        meta.created = key;
     };
 }
 
 export function UpdatedDateColumn() {
     return (target: any, key: string) => {
         let meta = getMeta(target);
-        meta.options.updatedAt = key;
+        meta.updated = key;
     };
 }
 
@@ -206,6 +206,10 @@ export function registerEntities(sequelize: Sequelize, entities: Function[]): Mo
         let e = Object.create(entity.prototype);
         let meta = getMeta(e);
 
+        // in case entity did not come from inheritance structure
+        meta.options.updatedAt = meta.updated || meta.options.updatedAt;
+        meta.options.createdAt = meta.created || meta.options.createdAt;
+
         sequelize.define(meta.name, meta.fields, meta.options);
     }
 
@@ -235,22 +239,24 @@ function mergeEntity(entity: Function) {
     // remove first key since it is this entity
     keys.splice(0, 1);
     let e = Object.create(entity.prototype);
-    let mainEntity = getMeta(e);
+    let mainEntityMeta = getMeta(e);
 
     // now lets add inherited entity items
     for (let key of keys) {
-        let meta = getEntityMeta(e, key);
-        if (meta != null) {
+        let inheritedMeta = getEntityMeta(e, key);
+        if (inheritedMeta != null) {
             // merge fields
-            for (let fKey of Object.keys(meta.fields)) {
-                mainEntity.fields[fKey] = meta.fields[fKey];
+            for (let fKey of Object.keys(inheritedMeta.fields)) {
+                mainEntityMeta.fields[fKey] = inheritedMeta.fields[fKey];
             }
 
-            // merge options
-            mainEntity.options = Object.assign({}, meta.options, mainEntity.options);
+            // merge options            
+            mainEntityMeta.options = Object.assign({}, inheritedMeta.options, mainEntityMeta.options);
+            mainEntityMeta.options.updatedAt = mainEntityMeta.updated || inheritedMeta.updated || mainEntityMeta.options.updatedAt;
+            mainEntityMeta.options.createdAt = mainEntityMeta.created || inheritedMeta.created || mainEntityMeta.options.updatedAt;
 
-            for (let aKey of Object.keys(meta.associations)) {
-                let association = meta.associations[aKey];
+            for (let aKey of Object.keys(inheritedMeta.associations)) {
+                let association = inheritedMeta.associations[aKey];
 
                 // for many to many associations inherited from the parent we have to append to the through table name or override the model
                 // or through options to create a new mapping table to prevent duplicate keys
@@ -271,7 +277,7 @@ function mergeEntity(entity: Function) {
                     association = manyToManyOptions;
                 }
 
-                mainEntity.associations[aKey] = association;
+                mainEntityMeta.associations[aKey] = association;
             }
         }
     }
@@ -303,6 +309,8 @@ interface IEntity {
         [key: string]: IEntityAssociation;
     };
     options: DefineOptions<any>;
+    updated: boolean | string;
+    created: boolean | string;
 }
 
 interface IEntityAssociation {
@@ -337,7 +345,7 @@ function getMeta(target: Object): IEntity {
             associations: {},
             fields: {},
             options: {}
-        };
+        } as IEntity;
 
         (target as any).__sequelize_meta__.entities[target.constructor.name] = found;
     }

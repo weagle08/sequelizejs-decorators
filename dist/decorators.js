@@ -34,14 +34,14 @@ exports.Column = Column;
 function CreatedDateColumn() {
     return (target, key) => {
         let meta = getMeta(target);
-        meta.options.createdAt = key;
+        meta.created = key;
     };
 }
 exports.CreatedDateColumn = CreatedDateColumn;
 function UpdatedDateColumn() {
     return (target, key) => {
         let meta = getMeta(target);
-        meta.options.updatedAt = key;
+        meta.updated = key;
     };
 }
 exports.UpdatedDateColumn = UpdatedDateColumn;
@@ -154,6 +154,8 @@ function registerEntities(sequelize, entities) {
         mergeEntity(entity);
         let e = Object.create(entity.prototype);
         let meta = getMeta(e);
+        meta.options.updatedAt = meta.updated || meta.options.updatedAt;
+        meta.options.createdAt = meta.created || meta.options.createdAt;
         sequelize.define(meta.name, meta.fields, meta.options);
     }
     for (let entity of entities) {
@@ -177,16 +179,18 @@ function mergeEntity(entity) {
     let keys = getEntityKeys(entity);
     keys.splice(0, 1);
     let e = Object.create(entity.prototype);
-    let mainEntity = getMeta(e);
+    let mainEntityMeta = getMeta(e);
     for (let key of keys) {
-        let meta = getEntityMeta(e, key);
-        if (meta != null) {
-            for (let fKey of Object.keys(meta.fields)) {
-                mainEntity.fields[fKey] = meta.fields[fKey];
+        let inheritedMeta = getEntityMeta(e, key);
+        if (inheritedMeta != null) {
+            for (let fKey of Object.keys(inheritedMeta.fields)) {
+                mainEntityMeta.fields[fKey] = inheritedMeta.fields[fKey];
             }
-            mainEntity.options = Object.assign({}, meta.options, mainEntity.options);
-            for (let aKey of Object.keys(meta.associations)) {
-                let association = meta.associations[aKey];
+            mainEntityMeta.options = Object.assign({}, inheritedMeta.options, mainEntityMeta.options);
+            mainEntityMeta.options.updatedAt = mainEntityMeta.updated || inheritedMeta.updated || mainEntityMeta.options.updatedAt;
+            mainEntityMeta.options.createdAt = mainEntityMeta.created || inheritedMeta.created || mainEntityMeta.options.updatedAt;
+            for (let aKey of Object.keys(inheritedMeta.associations)) {
+                let association = inheritedMeta.associations[aKey];
                 if (association.method === AssociationMethods.BELONGS_TO_MANY) {
                     let manyToManyOptions = Object.assign({}, association);
                     let mtoMAssn = Object.assign({}, manyToManyOptions.association);
@@ -204,7 +208,7 @@ function mergeEntity(entity) {
                     manyToManyOptions.association = mtoMAssn;
                     association = manyToManyOptions;
                 }
-                mainEntity.associations[aKey] = association;
+                mainEntityMeta.associations[aKey] = association;
             }
         }
     }
