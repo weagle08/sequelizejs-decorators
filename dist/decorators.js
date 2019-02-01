@@ -189,7 +189,7 @@ function mergeEntity(entity) {
                 let association = meta.associations[aKey];
                 if (association.method === AssociationMethods.BELONGS_TO_MANY) {
                     let manyToManyOptions = Object.assign({}, association);
-                    let mtoMAssn = manyToManyOptions.association;
+                    let mtoMAssn = Object.assign({}, manyToManyOptions.association);
                     if (typeof mtoMAssn.through === 'string') {
                         mtoMAssn.through = entity.name + mtoMAssn.through;
                     }
@@ -201,6 +201,7 @@ function mergeEntity(entity) {
                             mtoMAssn.through = entity.name + mtoMAssn.through.name;
                         }
                     }
+                    manyToManyOptions.association = mtoMAssn;
                     association = manyToManyOptions;
                 }
                 mainEntity.associations[aKey] = association;

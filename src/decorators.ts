@@ -257,7 +257,7 @@ function mergeEntity(entity: Function) {
                 if (association.method === AssociationMethods.BELONGS_TO_MANY) {
                     // TODO: improve this? there is the potential to have conflicting table names using this approach
                     let manyToManyOptions: IEntityAssociation = Object.assign({}, association);
-                    let mtoMAssn: AssociationOptionsBelongsToMany = manyToManyOptions.association as AssociationOptionsBelongsToMany;
+                    let mtoMAssn: AssociationOptionsBelongsToMany = Object.assign({}, manyToManyOptions.association) as AssociationOptionsBelongsToMany;
                     if (typeof mtoMAssn.through === 'string') {
                         mtoMAssn.through = entity.name + mtoMAssn.through;
                     } else {
@@ -267,7 +267,7 @@ function mergeEntity(entity: Function) {
                             mtoMAssn.through = entity.name + (mtoMAssn.through as Model<any, any>).name;
                         }
                     }
-
+                    manyToManyOptions.association = mtoMAssn;
                     association = manyToManyOptions;
                 }
 
