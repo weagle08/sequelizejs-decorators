@@ -11,7 +11,9 @@ import {
     DefineIndexesOptions,
     DefineNameOptions,
     DefineOptions,
-    Models
+    Models,
+    Model,
+    ThroughOptions
 } from 'sequelize';
 import { Sequelize } from 'sequelize';
 
@@ -248,7 +250,28 @@ function mergeEntity(entity: Function) {
             mainEntity.options = Object.assign({}, meta.options, mainEntity.options);
 
             for (let aKey of Object.keys(meta.associations)) {
-                mainEntity.associations[aKey] = meta.associations[aKey];
+                let association = meta.associations[aKey];
+
+                // for many to many associations inherited from the parent we have to append to the through table name or override the model
+                // or through options to create a new mapping table to prevent duplicate keys
+                if (association.method === AssociationMethods.BELONGS_TO_MANY) {
+                    // TODO: improve this? there is the potential to have conflicting table names using this approach
+                    let manyToManyOptions: IEntityAssociation = Object.assign({}, association);
+                    let mtoMAssn: AssociationOptionsBelongsToMany = manyToManyOptions.association as AssociationOptionsBelongsToMany;
+                    if (typeof mtoMAssn.through === 'string') {
+                        mtoMAssn.through = entity.name + mtoMAssn.through;
+                    } else {
+                        if ((mtoMAssn.through as ThroughOptions).model != null) {
+                            mtoMAssn.through = entity.name + (mtoMAssn.through as ThroughOptions).model.name;
+                        } else {
+                            mtoMAssn.through = entity.name + (mtoMAssn.through as Model<any, any>).name;
+                        }
+                    }
+
+                    association = manyToManyOptions;
+                }
+
+                mainEntity.associations[aKey] = association;
             }
         }
     }

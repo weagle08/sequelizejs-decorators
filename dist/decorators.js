@@ -186,7 +186,24 @@ function mergeEntity(entity) {
             }
             mainEntity.options = Object.assign({}, meta.options, mainEntity.options);
             for (let aKey of Object.keys(meta.associations)) {
-                mainEntity.associations[aKey] = meta.associations[aKey];
+                let association = meta.associations[aKey];
+                if (association.method === AssociationMethods.BELONGS_TO_MANY) {
+                    let manyToManyOptions = Object.assign({}, association);
+                    let mtoMAssn = manyToManyOptions.association;
+                    if (typeof mtoMAssn.through === 'string') {
+                        mtoMAssn.through = entity.name + mtoMAssn.through;
+                    }
+                    else {
+                        if (mtoMAssn.through.model != null) {
+                            mtoMAssn.through = entity.name + mtoMAssn.through.model.name;
+                        }
+                        else {
+                            mtoMAssn.through = entity.name + mtoMAssn.through.name;
+                        }
+                    }
+                    association = manyToManyOptions;
+                }
+                mainEntity.associations[aKey] = association;
             }
         }
     }
