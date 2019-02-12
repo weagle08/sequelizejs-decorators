@@ -1,42 +1,43 @@
 {
-  "name": "sequelizejs-decorators",
-  "version": "1.0.2",
-  "description": "decorators for the sequelize ORM for NodeJS",
-  "main": "dist/index.js",
-  "types": "src/index.ts",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/weagle08/sequelizejs-decorators.git"
-  },
-  "keywords": [
-    "sequelize",
-    "sequelize-decorators",
-    "sequelizejs-decorators",
-    "orm",
-    "orm-decorators"
-  ],
-  "author": "weagle08",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/weagle08/sequelizejs-decorators/issues"
-  },
-  "homepage": "https://github.com/weagle08/sequelizejs-decorators#readme",
-  "devDependencies": {
-    "@types/sequelize": "^4.27.34",
-    "del": "^3.0.0",
-    "gulp": "^3.9.1",
-    "gulp-changed": "^3.2.0",
-    "gulp-notify": "^3.2.0",
-    "gulp-plumber": "^1.2.1",
-    "gulp-sourcemaps": "^2.6.4",
-    "gulp-typescript": "^5.0.0",
-    "require-dir": "^1.2.0",
-    "run-sequence": "^2.2.1",
-    "sequelize": "^4.42.0",
-    "typescript": "^3.2.4",
-    "vinyl-paths": "^2.1.0"
-  }
+    "name": "sequelizejs-decorators",
+    "version": "1.0.2",
+    "description": "decorators for the sequelize ORM for NodeJS",
+    "main": "dist/index.js",
+    "types": "src/index.ts",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/weagle08/sequelizejs-decorators.git"
+    },
+    "keywords": [
+        "sequelize",
+        "sequelize-decorators",
+        "sequelizejs-decorators",
+        "orm",
+        "orm-decorators"
+    ],
+    "author": "weagle08",
+    "license": "MIT",
+    "bugs": {
+        "url": "https://github.com/weagle08/sequelizejs-decorators/issues"
+    },
+    "homepage": "https://github.com/weagle08/sequelizejs-decorators#readme",
+    "devDependencies": {
+        "@types/sequelize": "^4.27.35",
+        "del": "^3.0.0",
+        "gulp": "^4.0.0",
+        "gulp-changed": "^3.2.0",
+        "gulp-notify": "^3.2.0",
+        "gulp-plumber": "^1.2.1",
+        "gulp-sourcemaps": "^2.6.4",
+        "gulp-typescript": "^5.0.0",
+        "require-dir": "^1.2.0",
+        "typescript": "^3.2.4",
+        "vinyl-paths": "^2.1.0"
+    },
+    "peerDependencies": {
+        "sequelize": "^4.42.0"
+    }
 }

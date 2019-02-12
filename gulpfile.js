@@ -4,4 +4,4 @@ var gulp = require('gulp');
 // gulp configuration is in files in ./build directory
 require('require-dir')('build/tasks');
 
-gulp.task('default', ['watch']);
+gulp.task('default', gulp.series('build'));

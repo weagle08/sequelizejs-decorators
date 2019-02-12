@@ -1,11 +1,11 @@
 var gulp = require('gulp');
-var runSequence = require('run-sequence');
 var changed = require('gulp-changed');
 var plumber = require('gulp-plumber');
 var sourcemaps = require('gulp-sourcemaps');
 var paths = require('../paths');
 var notify = require('gulp-notify');
 var typescript = require('gulp-typescript');
+require('./clean');
 
 // transpiles changed es6 files to SystemJS format
 // the plumber() call prevents 'pipe breaking' caused
@@ -37,10 +37,7 @@ gulp.task('move', () => {
 // in ./clean.js), then runs the build-system
 // and build-html tasks in parallel
 // https://www.npmjs.com/package/gulp-run-sequence
-gulp.task('build', function (callback) {
-  return runSequence(
-    'clean',
-    ['build-system', 'move'],
-    callback
-  );
-});
+gulp.task('build', gulp.series(
+  'clean',
+  gulp.parallel('build-system', 'move')
+));

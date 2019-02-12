@@ -140,12 +140,12 @@ function Index(options) {
                 unique: options.unique,
                 fields: [key]
             };
+            meta.options.indexes.push(index);
         }
         else {
             index.fields.push(key);
         }
         clean(index);
-        meta.options.indexes.push(index);
     };
 }
 exports.Index = Index;
