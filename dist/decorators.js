@@ -1,7 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const dtype = require('sequelize').DataTypes;
-exports.DataType = dtype;
+const sequelize_1 = require("sequelize");
 function Entity(name, options) {
     return (target) => {
         let meta = getMeta(target.prototype);
@@ -50,7 +49,7 @@ function PrimaryGeneratedColumn() {
         let meta = getMeta(target);
         meta.fields[key] = {
             primaryKey: true,
-            type: exports.DataType.INTEGER,
+            type: sequelize_1.DataTypes.INTEGER,
             autoIncrement: true
         };
     };
@@ -202,7 +201,7 @@ function mergeEntity(entity) {
                             mtoMAssn.through = entity.name + mtoMAssn.through.model.name;
                         }
                         else {
-                            mtoMAssn.through = entity.name + mtoMAssn.through.name;
+                            throw new Error('invalid through options');
                         }
                     }
                     manyToManyOptions.association = mtoMAssn;
@@ -260,5 +259,4 @@ function clean(obj) {
         }
     }
 }
-
 //# sourceMappingURL=decorators.js.map

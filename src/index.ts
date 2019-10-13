@@ -2,7 +2,6 @@ export {
     BelongsTo,
     Column,
     CreatedDateColumn,
-    DataType,
     Entity,
     HasMany,
     HasOne,

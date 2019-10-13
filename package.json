@@ -1,11 +1,13 @@
 {
     "name": "sequelizejs-decorators",
-    "version": "1.0.3",
+    "version": "5.0.0",
     "description": "decorators for the sequelize ORM for NodeJS",
     "main": "dist/index.js",
     "types": "src/index.ts",
     "scripts": {
-        "test": "echo \"Error: no test specified\" && exit 1"
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "build": "tsc",
+        "prepublish": "npm run build"
     },
     "repository": {
         "type": "git",
@@ -25,19 +27,22 @@
     },
     "homepage": "https://github.com/weagle08/sequelizejs-decorators#readme",
     "devDependencies": {
-        "@types/sequelize": "^4.27.35",
+        "@types/bluebird": "^3.5.27",
+        "@types/node": "^12.7.12",
+        "@types/validator": "^10.11.3",
         "del": "^3.0.0",
-        "gulp": "^4.0.0",
+        "gulp": "^4.0.2",
         "gulp-changed": "^3.2.0",
         "gulp-notify": "^3.2.0",
         "gulp-plumber": "^1.2.1",
-        "gulp-sourcemaps": "^2.6.4",
-        "gulp-typescript": "^5.0.0",
+        "gulp-sourcemaps": "^2.6.5",
+        "gulp-typescript": "^5.0.1",
         "require-dir": "^1.2.0",
-        "typescript": "^3.2.4",
+        "typescript": "^3.6.4",
         "vinyl-paths": "^2.1.0"
     },
     "peerDependencies": {
-        "sequelize": "^4.42.0"
-    }
+        "sequelize": "^5.19.6"
+    },
+    "dependencies": {}
 }

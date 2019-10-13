@@ -2,23 +2,19 @@
 
 import {
     AssociationOptions,
-    AssociationOptionsBelongsTo,
-    AssociationOptionsBelongsToMany,
-    AssociationOptionsHasMany,
-    AssociationOptionsHasOne,
-    DataTypes as SequelizeDataTypes,
-    DefineAttributeColumnOptions,
-    DefineIndexesOptions,
-    DefineNameOptions,
-    DefineOptions,
-    Models,
+    BelongsToOptions,
+    BelongsToManyOptions,
+    HasManyOptions,
+    HasOneOptions,
+    DataTypes,
+    ModelAttributeColumnOptions,
+    IndexesOptions,
+    ModelOptions,
     Model,
+    ModelCtor,
     ThroughOptions
 } from 'sequelize';
 import { Sequelize } from 'sequelize';
-
-const dtype: SequelizeDataTypes = require('sequelize').DataTypes;
-export const DataType = dtype;
 
 export interface IIndexOptions {
     /**
@@ -29,7 +25,7 @@ export interface IIndexOptions {
     unique?: boolean;
 }
 
-export function Entity(name?: string | DefineOptions<any>, options?: DefineOptions<any>) {
+export function Entity(name?: string | ModelOptions<any>, options?: ModelOptions<any>) {
     return (target: Function) => {
         let meta = getMeta(target.prototype);
 
@@ -56,7 +52,7 @@ export function Entity(name?: string | DefineOptions<any>, options?: DefineOptio
     };
 }
 
-export function Column(attribute: DefineAttributeColumnOptions) {
+export function Column(attribute: ModelAttributeColumnOptions) {
     return (target: any, key: string) => {
         let meta = getMeta(target);
         meta.fields[key] = attribute;
@@ -82,13 +78,13 @@ export function PrimaryGeneratedColumn() {
         let meta = getMeta(target);
         meta.fields[key] = {
             primaryKey: true,
-            type: DataType.INTEGER,
+            type: DataTypes.INTEGER,
             autoIncrement: true
         };
     };
 }
 
-export function HasOne(typeFunction: () => Function, options?: AssociationOptionsHasOne) {
+export function HasOne(typeFunction: () => Function, options?: HasOneOptions) {
     return (target: any, key: string) => {
         let meta = getMeta(target);
 
@@ -106,7 +102,7 @@ export function HasOne(typeFunction: () => Function, options?: AssociationOption
     };
 }
 
-export function HasMany(typeFunction: () => Function, options?: AssociationOptionsHasMany) {
+export function HasMany(typeFunction: () => Function, options?: HasManyOptions) {
     return (target: any, key: string) => {
         let meta = getMeta(target);
 
@@ -124,7 +120,7 @@ export function HasMany(typeFunction: () => Function, options?: AssociationOptio
     };
 }
 
-export function BelongsTo(typeFunction: () => Function, options?: AssociationOptionsBelongsTo) {
+export function BelongsTo(typeFunction: () => Function, options?: BelongsToOptions) {
     return (target: any, key: string) => {
         let meta = getMeta(target);
 
@@ -142,12 +138,12 @@ export function BelongsTo(typeFunction: () => Function, options?: AssociationOpt
     };
 }
 
-export function ManyToMany(typeFunction: () => Function, options: AssociationOptionsBelongsToMany) {
+export function ManyToMany(typeFunction: () => Function, options: BelongsToManyOptions) {
     return (target: any, key: string) => {
         let meta = getMeta(target);
 
         if (options == null) {
-            options = {} as AssociationOptionsBelongsToMany;
+            options = {} as BelongsToManyOptions;
         }
 
         if (options.through == null) {
@@ -175,7 +171,7 @@ export function Index(options?: IIndexOptions) {
             options = {} as IIndexOptions;
         }
 
-        let index: DefineIndexesOptions = null;
+        let index: IndexesOptions = null;
         if (options.name != null) {
             index = meta.options.indexes.find((i) => {
                 return i.name === options.name;
@@ -197,7 +193,9 @@ export function Index(options?: IIndexOptions) {
     };
 }
 
-export function registerEntities(sequelize: Sequelize, entities: Function[]): Models {
+export function registerEntities(sequelize: Sequelize, entities: Function[]): {
+    [key: string]: ModelCtor<Model>;
+} {
     // define the attributes
     for (let entity of entities) {
         // initially we need to merge base entities with their children
@@ -262,14 +260,14 @@ function mergeEntity(entity: Function) {
                 if (association.method === AssociationMethods.BELONGS_TO_MANY) {
                     // TODO: improve this? there is the potential to have conflicting table names using this approach
                     let manyToManyOptions: IEntityAssociation = Object.assign({}, association);
-                    let mtoMAssn: AssociationOptionsBelongsToMany = Object.assign({}, manyToManyOptions.association) as AssociationOptionsBelongsToMany;
+                    let mtoMAssn: BelongsToManyOptions = Object.assign({}, manyToManyOptions.association) as BelongsToManyOptions;
                     if (typeof mtoMAssn.through === 'string') {
                         mtoMAssn.through = entity.name + mtoMAssn.through;
                     } else {
                         if ((mtoMAssn.through as ThroughOptions).model != null) {
                             mtoMAssn.through = entity.name + (mtoMAssn.through as ThroughOptions).model.name;
                         } else {
-                            mtoMAssn.through = entity.name + (mtoMAssn.through as Model<any, any>).name;
+                            throw new Error('invalid through options');
                         }
                     }
                     manyToManyOptions.association = mtoMAssn;
@@ -302,12 +300,12 @@ function getEntityKeys(entity: Function) {
 interface IEntity {
     name: string;
     fields: {
-        [key: string]: DefineAttributeColumnOptions
+        [key: string]: ModelAttributeColumnOptions
     };
     associations: {
         [key: string]: IEntityAssociation;
     };
-    options: DefineOptions<any>;
+    options: ModelOptions<any>;
     updated: boolean | string;
     created: boolean | string;
 }

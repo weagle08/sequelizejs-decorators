@@ -1,5 +1,5 @@
 # sequelizejs-decorators
-decorators for use with sequelize ORM
+Decorators for use with sequelize ORM. Version now follows the Sequelize library version (5.* -> 5.*) from version 5 onward.
 
 ## Getting Started
 
