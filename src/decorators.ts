@@ -2,16 +2,16 @@
 
 import {
     AssociationOptions,
-    BelongsToOptions,
     BelongsToManyOptions,
+    BelongsToOptions,
+    DataTypes,
     HasManyOptions,
     HasOneOptions,
-    DataTypes,
-    ModelAttributeColumnOptions,
     IndexesOptions,
-    ModelOptions,
     Model,
+    ModelAttributeColumnOptions,
     ModelCtor,
+    ModelOptions,
     ThroughOptions
 } from 'sequelize';
 import { Sequelize } from 'sequelize';
@@ -247,7 +247,7 @@ function mergeEntity(entity: Function) {
                 mainEntityMeta.fields[fKey] = inheritedMeta.fields[fKey];
             }
 
-            // merge options            
+            // merge options
             mainEntityMeta.options = Object.assign({}, inheritedMeta.options, mainEntityMeta.options);
             mainEntityMeta.options.updatedAt = mainEntityMeta.updated || inheritedMeta.updated || mainEntityMeta.options.updatedAt;
             mainEntityMeta.options.createdAt = mainEntityMeta.created || inheritedMeta.created || mainEntityMeta.options.updatedAt;
@@ -265,7 +265,11 @@ function mergeEntity(entity: Function) {
                         mtoMAssn.through = entity.name + mtoMAssn.through;
                     } else {
                         if ((mtoMAssn.through as ThroughOptions).model != null) {
-                            mtoMAssn.through = entity.name + (mtoMAssn.through as ThroughOptions).model.name;
+                            if (typeof (mtoMAssn.through as ThroughOptions).model === 'string') {
+                                mtoMAssn.through = entity.name + (mtoMAssn.through as ThroughOptions).model;
+                            } else {
+                                mtoMAssn.through = entity.name + ((mtoMAssn.through as ThroughOptions).model as any).name;
+                            }
                         } else {
                             throw new Error('invalid through options');
                         }
