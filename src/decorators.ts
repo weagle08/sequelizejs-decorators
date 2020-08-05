@@ -35,7 +35,7 @@ export function Entity(name?: string | ModelOptions<any>, options?: ModelOptions
             meta.name = target.name;
 
             if (options == null && name != null && typeof name === 'object') {
-                options = Object.assign({}, { name: name }, meta.options);
+                options = Object.assign({}, name, meta.options);
             }
         }
 
