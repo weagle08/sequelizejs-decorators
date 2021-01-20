@@ -184,7 +184,7 @@ export function Index(options?: IIndexOptions) {
                 unique: options.unique,
                 fields: [key]
             };
-            meta.options.indexes.push(index);
+            (meta.options.indexes as any).push(index);
         } else {
             index.fields.push(key);
         }

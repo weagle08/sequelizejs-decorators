@@ -1,6 +1,6 @@
 {
     "name": "sequelizejs-decorators",
-    "version": "6.0.1",
+    "version": "6.0.2",
     "description": "decorators for the sequelize ORM for NodeJS",
     "main": "dist/index.js",
     "types": "src/index.ts",
@@ -42,7 +42,7 @@
         "vinyl-paths": "^2.1.0"
     },
     "peerDependencies": {
-        "sequelize": "^6.3.4"
+        "sequelize": "^6.4.0"
     },
     "dependencies": {}
 }

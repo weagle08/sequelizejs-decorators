@@ -3,7 +3,7 @@
     "compilerOptions": {
         "rootDir": "src",
         "outDir": "dist",
-        "sourceMap": true,
+        "sourceMap": false,
         "target": "es2017",
         "module": "commonjs",
         "declaration": true,
@@ -11,7 +11,9 @@
         "removeComments": true,
         "emitDecoratorMetadata": true,
         "experimentalDecorators": true,
-        "moduleResolution": "node"
+        "moduleResolution": "node",
+        "skipDefaultLibCheck": true,
+        "skipLibCheck": true
     },
     "filesGlob": [
         "./src/**/*.ts",
