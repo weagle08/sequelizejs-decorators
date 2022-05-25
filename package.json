@@ -1,13 +1,15 @@
 {
     "name": "sequelizejs-decorators",
-    "version": "6.0.3",
+    "version": "6.1.0",
     "description": "decorators for the sequelize ORM for NodeJS",
     "main": "dist/index.js",
     "types": "src/index.ts",
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1",
-        "build": "tsc",
-        "prepare": "npm run build"
+        "build": "tsc -p tsconfig.json",
+        "prepare": "npm run build && npm run git && npm version patch",
+        "postpublish": "git push",
+        "git": "git add . && git commit -m \"published\""
     },
     "repository": {
         "type": "git",
@@ -27,22 +29,9 @@
     },
     "homepage": "https://github.com/weagle08/sequelizejs-decorators#readme",
     "devDependencies": {
-        "@types/bluebird": "3.5.32",
-        "@types/node": "12.12.53",
-        "@types/validator": "^10.11.3",
-        "del": "^3.0.0",
-        "gulp": "^4.0.2",
-        "gulp-changed": "^3.2.0",
-        "gulp-notify": "^3.2.0",
-        "gulp-plumber": "^1.2.1",
-        "gulp-sourcemaps": "^2.6.5",
-        "gulp-typescript": "^5.0.1",
-        "require-dir": "^1.2.0",
-        "typescript": "3.9.7",
-        "vinyl-paths": "^2.1.0"
+        "typescript": "4.7.2"
     },
     "peerDependencies": {
-        "sequelize": "^6.4.0"
-    },
-    "dependencies": {}
+        "sequelize": "6.20.0"
+    }
 }

@@ -10,7 +10,7 @@ import {
     IndexesOptions,
     Model,
     ModelAttributeColumnOptions,
-    ModelCtor,
+    ModelStatic,
     ModelOptions,
     ThroughOptions
 } from 'sequelize';
@@ -194,7 +194,7 @@ export function Index(options?: IIndexOptions) {
 }
 
 export function registerEntities(sequelize: Sequelize, entities: Function[]): {
-    [key: string]: ModelCtor<Model>;
+    [key: string]: ModelStatic<Model>;
 } {
     // define the attributes
     for (let entity of entities) {
