@@ -1,6 +1,6 @@
 {
     "name": "sequelizejs-decorators",
-    "version": "6.1.1",
+    "version": "6.1.2",
     "description": "decorators for the sequelize v6* ORM for NodeJS",
     "main": "dist/index.js",
     "types": "src/index.ts",
