@@ -16,6 +16,8 @@ import {
 } from 'sequelize';
 import { Sequelize } from 'sequelize';
 
+export const DataType = DataTypes;
+
 export interface IIndexOptions {
     /**
      * name for the index
