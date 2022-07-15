@@ -10,5 +10,6 @@ export {
     ManyToMany,
     PrimaryGeneratedColumn,
     UpdatedDateColumn,
-    registerEntities
+    registerEntities,
+    DataType
 } from './decorators';
