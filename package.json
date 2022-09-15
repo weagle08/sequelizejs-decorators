@@ -3,7 +3,6 @@
     "version": "6.1.4",
     "description": "decorators for sequelize v6* ORM for NodeJS",
     "main": "dist/index.js",
-    "types": "src/index.ts",
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1",
         "build": "tsc -p tsconfig.json",
