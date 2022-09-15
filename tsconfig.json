@@ -14,7 +14,9 @@
         "moduleResolution": "node",
         "skipDefaultLibCheck": true,
         "skipLibCheck": true,
-        "forceConsistentCasingInFileNames": true
+        "forceConsistentCasingInFileNames": true,
+        "strictPropertyInitialization": false,
+        "strict": false
     },
     "include": [
         "./src/**/*.ts"
