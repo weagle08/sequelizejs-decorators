@@ -7,7 +7,7 @@
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1",
         "build": "tsc -p tsconfig.json",
-        "prepare": "npm run build && npm run git && npm version patch",
+        "prepublishOnly": "npm run build && npm run git && npm version patch",
         "postpublish": "git push",
         "git": "git add . && git commit -m \"published\""
     },
